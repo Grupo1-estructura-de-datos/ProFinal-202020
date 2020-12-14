@@ -26,9 +26,10 @@
 
 
 import sys
-import config
+import config 
 from App import controller
-from DISClib.ADT import stack
+from DISClib.ADT import stack as sk
+from DISClib.ADT import queue as qe
 import timeit
 assert config
 
@@ -43,11 +44,95 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
+recursionLimit = 20000
+large = "taxi-trips-wrvz-psew-subset-large.csv"
+medium = "taxi-trips-wrvz-psew-subset-medium.csv"
+small = "taxi-trips-wrvz-psew-subset-small.csv"
+
+# ___________________________________________________
+#  Funciones para imprimir la información de
+#  respuesta.  La vista solo interactua con
+#  el controlador.
+# ___________________________________________________
+
+def ImprimirEnConsola(cola, DatosAdicionales = None):
+    if qe.isEmpty(cola)==False: 
+        Centinela = True
+        print("-"*100)
+        while Centinela==True:
+            print("", end=" "*10)
+            k = qe.dequeue(cola)
+            if not k=="": print("•" + k)
+            else: print(k)
+            if qe.isEmpty(cola)==True: Centinela=False
+        print("-"*100)
+    else: print("No se ha encontrado información para el criterio")
+    if DatosAdicionales!=None:
+        if qe.isEmpty(DatosAdicionales)==False:
+            CentinelaAdicionales = True
+            while CentinelaAdicionales==True:
+                dato = qe.dequeue(DatosAdicionales)
+                print(str(dato[0])+str(dato[1]))
+                if qe.isEmpty(DatosAdicionales)==True: CentinelaAdicionales=False
 
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
-"""
-Menu principal
-"""
+def printMenu():
+    print("\n")
+    print("*"*43)
+    print("Bienvenido")
+    print("1- Crear estructuras de datos")
+    print("2- Cargar información de taxis en Chicago")
+    print("3- Reporte (Parte A)")
+    print("0- Salir")
+    print("*"*43)
+
+def optionOne():
+    global cont
+    print("\nInicializando....")
+    cont = controller.init()
+
+def optionTwo():
+    print("\nCargando información de taxis en Chicago ....")
+    sys.setrecursionlimit(recursionLimit)
+    controller.loadData(cont, tamaño)
+    print('Viajes cargados ' + str(controller.dataSize(cont)))
+
+def optionThree():
+    print("\nCargando reporte ....")
+    reporte = controller.f3(cont,M,N)
+    ImprimirEnConsola(reporte)
+
+while True:
+    #try:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n>')
+
+    if int(inputs) == 0:
+        print("\nHasta pronto!")
+        break
+
+    if int(inputs) == 1:
+        executiontime = timeit.timeit(optionOne, number=1)
+        print("Tiempo de ejecución: " + str(executiontime)+ " segundos")
+
+    elif int(inputs) == 2:
+        tamaño = input("Si desea trabajar con el archivo de datos grande escriba L, con el mediano M, y con el pequeño S: ").upper()
+        if tamaño=="L": tamaño = large
+        elif tamaño=="M": tamaño = medium
+        elif tamaño=="S": tamaño = small
+        executiontime = timeit.timeit(optionTwo, number=1)
+        print("Tiempo de ejecución: " + str(executiontime)+ " segundos")
+
+    elif int(inputs) == 3:
+        M = int(input("Ingrese el número de compañías que quiere que se muestren por número de táxis afiliados: "))
+        N = int(input("Ingrese el número de compañías que quiere que se muestren por número de servicios prestados: "))
+        executiontime = timeit.timeit(optionThree, number=1)
+        print("Tiempo de ejecución: " + str(executiontime)+ " segundos")
+
+    #except:
+     #   print("\nAlgo ocurrió mal, asegurese que todo esté bien e intente nuevamente: ")
+
+sys.exit(0)

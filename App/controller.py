@@ -27,6 +27,7 @@
 import config as cf
 from App import model
 import csv
+from DISClib.ADT import queue as qe
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -40,12 +41,55 @@ recae sobre el controlador.
 #  Inicializacion del catalogo
 # ___________________________________________________
 
+def init():
+    """
+    Llama la funcion de inicializacion  del modelo.
+    """
+    # analyzer es utilizado para interactuar con el modelo
+    analyzer = model.newAnalyzer()
+    return analyzer
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
 
+def loadData(analyzer, filename):
+    """
+    Carga los datos de los archivos CSV en el modelo
+    """
+    filecsv = cf.data_dir + filename
+    input_file = csv.DictReader(open(filecsv, encoding="utf-8"),
+                                delimiter=",")
+    for data in input_file:
+        model.addData(analyzer, data)
+    return analyzer
+
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+def QueueMenorAMayor(QMay,QMen):
+    if not qe.isEmpty(QMen):
+        D = True
+        while D:
+            qe.enqueue(QMay,qe.dequeue(QMen))
+            if qe.isEmpty(QMen): D = False
+    return QMay
+
+def dataSize(analyzer):
+    return model.dataSize(analyzer)
+
+def f3(analyzer,M,N):
+    cola = qe.newQueue()
+    colas = model.f3(analyzer,M,N)
+    cola = QueueMenorAMayor(cola,colas[0])
+    qe.enqueue(cola,"")
+    qe.enqueue(cola,"")
+    qe.enqueue(cola,"A continuación, top compañias por cantidad de taxis afiliados, con su número respectivo de taxis: ")
+    cola = QueueMenorAMayor(cola,colas[1])
+    qe.enqueue(cola,"")
+    qe.enqueue(cola,"")
+    qe.enqueue(cola,"A continuación, top compañias por cantidad de servicios ofrecidos, con su número respectivo de servicios ofrecidos: ")
+    cola = QueueMenorAMayor(cola,colas[2])
+    return cola
