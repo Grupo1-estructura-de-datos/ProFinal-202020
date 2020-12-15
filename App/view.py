@@ -31,6 +31,7 @@ from App import controller
 from DISClib.ADT import stack as sk
 from DISClib.ADT import queue as qe
 import timeit
+import datetime
 assert config
 
 """
@@ -45,6 +46,7 @@ operación seleccionada.
 # ___________________________________________________
 
 recursionLimit = 20000
+FechaF = None
 large = "taxi-trips-wrvz-psew-subset-large.csv"
 medium = "taxi-trips-wrvz-psew-subset-medium.csv"
 small = "taxi-trips-wrvz-psew-subset-small.csv"
@@ -86,6 +88,8 @@ def printMenu():
     print("1- Crear estructuras de datos")
     print("2- Cargar información de taxis en Chicago")
     print("3- Reporte (Parte A)")
+    print("4- Taxis con más puntos (Parte B)")
+    print("5- Mejor horario para desplazarse entre dos Community Area (Parte C)")
     print("0- Salir")
     print("*"*43)
 
@@ -104,6 +108,15 @@ def optionThree():
     print("\nCargando reporte ....")
     reporte = controller.f3(cont,M,N)
     ImprimirEnConsola(reporte)
+
+def optionFour():
+    print("\nCargando taxis con más puntos ....")
+    top = controller.f4(cont,Ñ,FechaI,FechaF)
+    ImprimirEnConsola(top)
+
+def optionFive():
+    print("5- Cargando mejor horario para desplazarse entre dos Community Area")
+    horario = controller.f5(cont, CAI, CAF, HI, HF)
 
 while True:
     #try:
@@ -130,6 +143,33 @@ while True:
         M = int(input("Ingrese el número de compañías que quiere que se muestren por número de táxis afiliados: "))
         N = int(input("Ingrese el número de compañías que quiere que se muestren por número de servicios prestados: "))
         executiontime = timeit.timeit(optionThree, number=1)
+        print("Tiempo de ejecución: " + str(executiontime)+ " segundos")
+
+    elif int(inputs) == 4:
+        print("¿Desea obtener el top de taxis usando la función alfa, para un solo día o para un rango de fechas?")
+        booleano = int(input("""Ingrese "1" para un solo día o "2" para un rango de fechas: """))
+        Ñ = int(input("Ingrese el número de táxis que quiere que se muestren en el top: "))
+        if booleano==1:
+            FechaI = input("Fecha (YYYY-MM-DD): ")
+            FechaI = datetime.datetime.strptime(FechaI, '%Y-%m-%d').date()
+        elif booleano==2:
+            FechaI = input("Fecha inicial (YYYY-MM-DD): ")
+            FechaI = datetime.datetime.strptime(FechaI, '%Y-%m-%d').date()
+            FechaF = input("Fecha final (YYYY-MM-DD): ")
+            FechaF = datetime.datetime.strptime(FechaF, '%Y-%m-%d').date()
+        executiontime = timeit.timeit(optionFour, number=1)
+        print("Tiempo de ejecución: " + str(executiontime)+ " segundos")
+    
+    elif int(inputs) == 5:
+        CAI = str(float(input("Por favor introduzca el número de la Community Area de la cual quiere salir: ")))
+        CAF = str(float(input("Por favor introduzca el número de la Community Area a la cual quiere llegar: ")))
+        HI = input("Hora Inicial (HH:MM): ")
+        HI = "1900-01-01 " + HI
+        HF = input("Hora Final (HH:MM): ")
+        HF = "1900-01-01 " + HF
+        HI = datetime.datetime.strptime(HI, '%Y-%m-%d %H:%M').time()
+        HF = datetime.datetime.strptime(HF, '%Y-%m-%d %H:%M').time()
+        executiontime = timeit.timeit(optionFive, number=1)
         print("Tiempo de ejecución: " + str(executiontime)+ " segundos")
 
     #except:
