@@ -116,7 +116,7 @@ def optionFour():
 
 def optionFive():
     print("5- Cargando mejor horario para desplazarse entre dos Community Area")
-    horario = controller.f5(cont, CAI, CAF, HI, HF)
+    ImprimirEnConsola(controller.f5(cont, CAI, CAF, HI, HF))
 
 while True:
     try:
