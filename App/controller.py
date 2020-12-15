@@ -59,8 +59,7 @@ def loadData(analyzer, filename):
     Carga los datos de los archivos CSV en el modelo
     """
     filecsv = cf.data_dir + filename
-    input_file = csv.DictReader(open(filecsv, encoding="utf-8"),
-                                delimiter=",")
+    input_file = csv.DictReader(open(filecsv,encoding="utf-8"),delimiter=",")
     for data in input_file:
         model.addData(analyzer, data)
     return analyzer
@@ -92,4 +91,17 @@ def f3(analyzer,M,N):
     qe.enqueue(cola,"")
     qe.enqueue(cola,"A continuación, top compañias por cantidad de servicios ofrecidos, con su número respectivo de servicios ofrecidos: ")
     cola = QueueMenorAMayor(cola,colas[2])
+    return cola
+
+def f4(analyzer,Ñ,FechaI,FechaF=None):
+    if FechaF==None: cola = model.ColaTopÑAlfaFecha(analyzer,FechaI,Ñ)
+    else: cola = model.ColaTopÑAlfaFechas(analyzer,FechaI,FechaF,Ñ)
+    return cola
+
+def f5(cont, CAI, CAF, HI, HF):
+    cola = qe.newQueue()
+    minimo = model.CostoMinimo(cont, CAI, CAF, HI, HF)
+    qe.enqueue(cola,"El costo mínimo de tiempo en segundos entre las dos rutas es de: " + str(minimo[1]))
+    qe.enqueue(cola,"Este se da saliendo de la estación de origen a las: " + str(minimo[2]))
+    qe.enqueue(cola,"La ruta de este camino es: : " + str(minimo[0]))
     return cola
